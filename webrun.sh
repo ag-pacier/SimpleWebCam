@@ -23,7 +23,7 @@ do
 
     timestamp=${date +"%A, %b %d, %Y %I:%M %p"}
 
-    if [ ! -z $(grep "$timestamp" "$FILE") ]
+    if [ ! -z $(grep "$timestamp" ~./label.txt) ]
     then sleep 2
     else
     echo $WEBCAM_NAME > ~./label.txt
