@@ -7,15 +7,6 @@ apt update > /dev/null
 apt dist-upgrade -y > /dev/null
 apt install libnginx-mod-rtmp -y > /dev/null
 
-read -p "What should be the camera name?(default is NewCam)" webcam_name
-
-if ${#webcam_name} -lt 3
-then webcam_name="NewCam"
-fi
-
-echo "Using $webcam_name for the device name."
-echo "export WEBCAM_NAME=$webcam_name" >> /etc/profile
-
 cat >/etc/nginx/rtmp.conf <<EOL
 rtmp {
   server {
@@ -30,3 +21,36 @@ rtmp {
 EOL
 
 sed -e '/include /etc/nginx/modules-enabled/*.conf;/a\'$'\n''include /etc/nginx/rtmp.conf;' /etc/nginx/nginx.conf
+systemctl daemon-reload
+systemctl restart nginx
+
+echo "Activated RTMP on port 1935."
+
+read -p "Where is the webrun.sh script going to live? Please use the full path" script_loc
+
+cat >/etc/systemd/system/webstream.service <<EOL
+[Unit]
+Description=Streamer
+After=network.target
+
+[Service]
+ExecStart=$script_loc
+KillMode=control-group
+Restart=on-failure
+TimeoutSec=2
+
+[Install]
+WantedBy=multi-user.target
+Alias=streaming.service
+EOL
+
+read -p "What is the name of the camera?" cam_name
+
+read -p "Where is the label going to live?" label_loc
+
+sed s/"POC Camera"/$cam_name $script_loc
+sed s/"label.txt"/label_loc $script_loc
+
+systemctl enable webstream
+
+echo "Setup complete. Please reboot and see if you can grab the screen grab."
