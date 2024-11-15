@@ -2,10 +2,24 @@
 # This is a script to automate the initial setup of a raspberry pi webcam
 # this will assume a fresh install of rasbian lite
 
-echo "Updating OS and installing nginx with rtmp support"
+echo "Updating OS and installing nginx with rtmp support and auto updates"
 apt update > /dev/null
 apt dist-upgrade -y > /dev/null
-apt install libnginx-mod-rtmp gunzip -y > /dev/null
+apt install libnginx-mod-rtmp gunzip unattended-upgrades -y > /dev/null
+
+cat >>/etc/apt/apt.conf.d/50unattended-upgrades <<EOL
+Unattended-Upgrade::Origins-Pattern {
+        "origin=Debian,codename=${distro_codename}-updates";
+        "origin=Debian,codename=${distro_codename},label=Debian";
+        "origin=Debian,codename=${distro_codename},label=Debian-Security";
+        "origin=Raspbian,codename=${distro_codename},label=Raspbian";
+        "origin=Raspberry Pi Foundation,codename=${distro_codename},label=Raspberry Pi Foundation";
+};
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
+Unattended-Upgrade::Automatic-Reboot-Time "02:00";
+EOL
+
+echo "Installed and configured unattended-upgrades"
 
 cat >/etc/nginx/rtmp.conf <<EOL
 rtmp {
