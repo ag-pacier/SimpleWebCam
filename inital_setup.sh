@@ -48,9 +48,12 @@ read -p "What is the name of the camera?" cam_name
 
 read -p "Where is the label going to live?" label_loc
 
+read -p "Where is the logo going to live?" logo_loc
+
 sed s/"POC Camera"/$cam_name $script_loc
-sed s/"label.txt"/label_loc $script_loc
+sed s/"label.txt"/$label_loc $script_loc
+sed s/"logo.png"/$logo_loc $script_loc
 
 systemctl enable webstream
 
-echo "Setup complete. Please reboot and see if you can grab the screen grab."
+echo "Setup complete. Please reboot and check the status of the stream."
