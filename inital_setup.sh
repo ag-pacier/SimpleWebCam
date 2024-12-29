@@ -5,7 +5,7 @@
 echo "Updating OS and installing nginx with rtmp support and auto updates"
 apt update > /dev/null
 apt dist-upgrade -y > /dev/null
-apt install libnginx-mod-rtmp gunzip unattended-upgrades -y > /dev/null
+apt install libnginx-mod-rtmp nginx nginx-common gzip unattended-upgrades -y > /dev/null
 
 cat >>/etc/apt/apt.conf.d/50unattended-upgrades <<EOL
 Unattended-Upgrade::Origins-Pattern {
