@@ -5,7 +5,7 @@
 echo "Updating OS and installing nginx with rtmp support and auto updates"
 apt update > /dev/null
 apt dist-upgrade -y > /dev/null
-apt install libnginx-mod-rtmp nginx nginx-common gzip unattended-upgrades -y > /dev/null
+apt install libnginx-mod-rtmp nginx nginx-common gzip unattended-upgrades ffmpeg -y > /dev/null
 
 cat >>/etc/apt/apt.conf.d/50unattended-upgrades <<EOL
 Unattended-Upgrade::Origins-Pattern {
@@ -62,7 +62,7 @@ server {
 EOL
 
 mkdir /var/www/html/rtmp
-gunzip -c /usr/share/doc/libnginx-mod-rtmp/examples/stat.xsl.gz > /var/www/html/rtmp/stat.xsl
+gzip -c /usr/share/doc/libnginx-mod-rtmp/examples/stat.xsl.gz > /var/www/html/rtmp/stat.xsl
 ln -s /etc/nginx/sites-available/rtmp /etc/nginx/sites-enabled/rtmp
 
 systemctl reload nginx
